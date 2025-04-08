@@ -100,30 +100,30 @@ function App() {
   };
 
   return (
-    <div className={`min-h-screen bg-white dark:bg-[#030303] text-gray-900 dark:text-gray-200 py-8 px-4 transition-colors duration-200`}>
-      <div className="max-w-2xl mx-auto space-y-4">
+    <div className={`min-h-screen bg-white dark:bg-[#030303] text-gray-900 dark:text-gray-200 py-4 px-2 sm:py-8 sm:px-4 transition-colors duration-200`}>
+      <div className="max-w-2xl mx-auto space-y-3 sm:space-y-4">
         {/* Theme Toggle */}
         <button
           onClick={toggleTheme}
-          className="fixed top-4 right-4 p-2 rounded-full bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
+          className="fixed top-2 right-2 sm:top-4 sm:right-4 p-2 rounded-full bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
           aria-label="Toggle theme"
         >
-          {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+          {theme === 'dark' ? <Sun size={16} className="sm:w-5 sm:h-5" /> : <Moon size={16} className="sm:w-5 sm:h-5" />}
         </button>
 
         {/* URL Input Form */}
-        <form onSubmit={handlePostUrlSubmit} className="bg-gray-100 dark:bg-[#1a1a1b] p-4 rounded-md">
-          <div className="flex gap-2">
+        <form onSubmit={handlePostUrlSubmit} className="bg-gray-100 dark:bg-[#1a1a1b] p-3 sm:p-4 rounded-md">
+          <div className="flex flex-col sm:flex-row gap-2">
             <input
               type="text"
               value={postUrl}
               onChange={(e) => setPostUrl(e.target.value)}
               placeholder="Enter Reddit post URL"
-              className="flex-1 px-4 py-2 bg-white dark:bg-[#272729] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-gray-200"
+              className="flex-1 px-3 py-2 sm:px-4 sm:py-2 text-sm sm:text-base bg-white dark:bg-[#272729] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-gray-200"
             />
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+              className="px-3 py-2 sm:px-4 sm:py-2 text-sm sm:text-base bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
             >
               Load Post
             </button>
@@ -133,27 +133,27 @@ function App() {
         {/* Download Button */}
         <button 
           onClick={handleDownload}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors"
+          className="w-full flex items-center justify-center gap-2 px-3 py-2 sm:px-4 sm:py-2 text-sm sm:text-base bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors"
           title="Download as JPEG"
         >
-          <Download size={20} />
-          <span>Download as PNG</span>
+          <Download size={16} className="sm:w-5 sm:h-5" />
+          <span>Download as JPEG</span>
         </button>
 
         {/* Privacy Controls */}
-        <div className="bg-gray-100 dark:bg-[#1a1a1b] p-4 rounded-md flex gap-4">
+        <div className="bg-gray-100 dark:bg-[#1a1a1b] p-3 sm:p-4 rounded-md flex flex-col sm:flex-row gap-2 sm:gap-4">
           <button
             onClick={() => setShowUsername(!showUsername)}
-            className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-[#272729] rounded-md hover:bg-gray-50 dark:hover:bg-[#323234] transition-colors"
+            className="flex items-center justify-center gap-2 px-3 py-2 sm:px-4 sm:py-2 text-sm sm:text-base bg-white dark:bg-[#272729] rounded-md hover:bg-gray-50 dark:hover:bg-[#323234] transition-colors"
           >
-            {showUsername ? <EyeOff size={20} /> : <Eye size={20} />}
+            {showUsername ? <EyeOff size={16} className="sm:w-5 sm:h-5" /> : <Eye size={16} className="sm:w-5 sm:h-5" />}
             {showUsername ? 'Hide' : 'Show'} Username
           </button>
           <button
             onClick={() => setShowSubreddit(!showSubreddit)}
-            className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-[#272729] rounded-md hover:bg-gray-50 dark:hover:bg-[#323234] transition-colors"
+            className="flex items-center justify-center gap-2 px-3 py-2 sm:px-4 sm:py-2 text-sm sm:text-base bg-white dark:bg-[#272729] rounded-md hover:bg-gray-50 dark:hover:bg-[#323234] transition-colors"
           >
-            {showSubreddit ? <EyeOff size={20} /> : <Eye size={20} />}
+            {showSubreddit ? <EyeOff size={16} className="sm:w-5 sm:h-5" /> : <Eye size={16} className="sm:w-5 sm:h-5" />}
             {showSubreddit ? 'Hide' : 'Show'} Subreddit
           </button>
         </div>
@@ -162,11 +162,11 @@ function App() {
         <div className="bg-gray-100 dark:bg-[#1a1a1b] rounded-md" ref={contentRef}>
           {/* Post Header */}
           <div>
-            <div className="flex items-center p-2 text-xs text-gray-500 dark:text-gray-400">
+            <div className="flex items-center p-2 text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
               <img 
                 src={postData?.subreddit_detail?.community_icon || postData?.sr_detail?.icon_img || "https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"} 
                 alt="Subreddit icon" 
-                className="w-5 h-5 rounded-full mr-2"
+                className="w-4 h-4 sm:w-5 sm:h-5 rounded-full mr-2"
               />
               {showSubreddit ? (
                 <>
@@ -192,7 +192,7 @@ function App() {
             </div>
 
             {/* Post Title */}
-            <h2 className="px-8 py-2 text-lg font-medium">
+            <h2 className="px-4 sm:px-8 py-2 text-sm sm:text-lg font-medium">
               {postData?.title || 'AI Generated Landscape - What do you think?'}
             </h2>
           </div>
@@ -200,15 +200,15 @@ function App() {
           {/* Post Actions */}
           <div className="flex items-center px-2 py-2 border-t border-gray-200 dark:border-gray-800 text-gray-500 dark:text-gray-400">
             {/* Votes */}
-            <div className="flex items-center space-x-1 mr-4">
+            <div className="flex items-center space-x-1 mr-2 sm:mr-4">
               <button 
                 onClick={handleUpvote}
                 className={`p-1 hover:bg-gray-200 dark:hover:bg-gray-800 rounded ${isUpvoted ? 'text-orange-500' : ''}`}
                 title="Upvote"
               >
-                <ArrowBigUp size={20} />
+                <ArrowBigUp size={16} className="sm:w-5 sm:h-5" />
               </button>
-              <span className={`font-medium ${isUpvoted ? 'text-orange-500' : isDownvoted ? 'text-blue-500' : ''}`}>
+              <span className={`font-medium text-sm sm:text-base ${isUpvoted ? 'text-orange-500' : isDownvoted ? 'text-blue-500' : ''}`}>
                 {postData?.score || votes}
               </span>
               <button 
@@ -216,41 +216,41 @@ function App() {
                 className={`p-1 hover:bg-gray-200 dark:hover:bg-gray-800 rounded ${isDownvoted ? 'text-blue-500' : ''}`}
                 title="Downvote"
               >
-                <ArrowBigDown size={20} />
+                <ArrowBigDown size={16} className="sm:w-5 sm:h-5" />
               </button>
             </div>
 
             {/* Comments */}
-            <button className="flex items-center space-x-1 p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded mr-4">
-              <MessageSquare size={20} />
-              <span>{postData?.num_comments || '24'} Comments</span>
+            <button className="flex items-center space-x-1 p-1 sm:p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded mr-2 sm:mr-4">
+              <MessageSquare size={16} className="sm:w-5 sm:h-5" />
+              <span className="text-sm sm:text-base">{postData?.num_comments || '24'} Comments</span>
             </button>
 
             {/* Share */}
-            <button className="flex items-center space-x-1 p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded mr-4">
-              <Share2 size={20} />
-              <span>Share</span>
+            <button className="flex items-center space-x-1 p-1 sm:p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded mr-2 sm:mr-4">
+              <Share2 size={16} className="sm:w-5 sm:h-5" />
+              <span className="text-sm sm:text-base">Share</span>
             </button>
 
             {/* Save */}
-            <button className="flex items-center space-x-1 p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded mr-4">
-              <BookmarkPlus size={20} />
-              <span>Save</span>
+            <button className="flex items-center space-x-1 p-1 sm:p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded mr-2 sm:mr-4">
+              <BookmarkPlus size={16} className="sm:w-5 sm:h-5" />
+              <span className="text-sm sm:text-base">Save</span>
             </button>
 
             {/* More */}
             <button 
-              className="p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded"
+              className="p-1 sm:p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded"
               title="More options"
             >
-              <MoreHorizontal size={20} />
+              <MoreHorizontal size={16} className="sm:w-5 sm:h-5" />
             </button>
           </div>
         </div>
 
         {/* Error Message */}
         {error && (
-          <div className="bg-red-500/10 text-red-500 p-4 rounded-md">
+          <div className="bg-red-500/10 text-red-500 p-3 sm:p-4 rounded-md text-sm sm:text-base">
             Failed to load post data. Please check the URL and try again.
           </div>
         )}
