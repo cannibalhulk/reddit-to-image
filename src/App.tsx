@@ -4,11 +4,12 @@ import { Analytics } from "@vercel/analytics/react"
 import useSWR from 'swr';
 import { useTheme } from './ThemeContext';
 import html2canvas from 'html2canvas';
+import { PostSkeleton } from './components/PostSkeleton';
 
 function App() {
   const { theme, toggleTheme } = useTheme();
   const [postUrl, setPostUrl] = useState('');
-  const [postId, setPostId] = useState('');
+  const [postId, setPostId] = useState('t3_1juhb3z'); // Default AskReddit post
   const [parentPostId, setParentPostId] = useState('');
   const [votes, setVotes] = useState(1);
   const [isUpvoted, setIsUpvoted] = useState(false);
@@ -100,6 +101,22 @@ function App() {
     }
   };
 
+  const formatDate = (timestamp: number) => {
+    const date = new Date(timestamp * 1000);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+    
+    if (diffInSeconds < 60) return 'just now';
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+    if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`;
+    if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 604800)}w ago`;
+    if (diffInSeconds < 31536000) return `${Math.floor(diffInSeconds / 2592000)}mo ago`;
+    return `${Math.floor(diffInSeconds / 31536000)}y ago`;
+  };
+
+  
+
   return (
     <div className={`min-h-screen bg-white dark:bg-[#030303] text-gray-900 dark:text-gray-200 py-4 px-2 sm:py-8 sm:px-4 transition-colors duration-200`}>
       <div className="max-w-2xl mx-auto space-y-3 sm:space-y-4">
@@ -160,94 +177,105 @@ function App() {
         </div>
 
         {/* Post Content */}
-        <div className="bg-gray-100 dark:bg-[#1a1a1b] rounded-md" ref={contentRef}>
-          {/* Post Header */}
-          <div>
-            <div className="flex items-center p-2 text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
-              <img 
-                src={postData?.subreddit_detail?.community_icon || postData?.sr_detail?.icon_img || "https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"} 
-                alt="Subreddit icon" 
-                className="w-4 h-4 sm:w-5 sm:h-5 rounded-full mr-2"
-              />
-              {showSubreddit ? (
-                <>
-                  <span className="font-medium">{postData?.subreddit_name_prefixed || 'r/ImageGeneration'}</span>
+        {!postData && !error ? (
+          <PostSkeleton />
+        ) : (
+          <div className="bg-gray-100 dark:bg-[#1a1a1b] rounded-md" ref={contentRef}>
+            {/* Post Header */}
+            <div>
+              <div className="flex items-center p-2 text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
+                <img 
+                  src={postData?.subreddit_detail?.community_icon || postData?.sr_detail?.icon_img || "https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"} 
+                  alt="Subreddit icon" 
+                  className="w-4 h-4 sm:w-5 sm:h-5 rounded-full mr-2"
+                />
+                {showSubreddit ? (
+                  <>
+                    <span className="font-medium">{postData?.subreddit_name_prefixed || 'r/ImageGeneration'}</span>
+                    <span className="mx-1">•</span>
+                  </>
+                ):
+                (<>
+                  <span className="font-medium">{'Subreddit'}</span>
                   <span className="mx-1">•</span>
-                </>
-              ):
-              (<>
-                <span className="font-medium">{'Subreddit'}</span>
-                <span className="mx-1">•</span>
-              </>)}
-              {showUsername ? (
-                <>
-                  <span>Posted by {postData?.author ? `u/${postData.author}` : 'u/ai_artist'}</span>
+                </>)}
+                {showUsername ? (
+                  <>
+                    <span>Posted by {postData?.author ? `u/${postData.author}` : 'u/ai_artist'}</span>
+                    <span className="mx-1">•</span>
+                  </>
+                ):
+                (<>
+                  <span>Posted by {'a reddit user'}</span>
                   <span className="mx-1">•</span>
-                </>
-              ):
-              (<>
-                <span>Posted by {'a reddit user'}</span>
-                <span className="mx-1">•</span>
-              </>)}
-              <span>2 hours ago</span>
+                </>)}
+                <span>{postData?.created_utc ? formatDate(postData.created_utc) : 'just now'}</span>
+              </div>
+
+              {/* Post Title */}
+              <h2 className="px-4 sm:px-8 py-2 text-sm sm:text-lg font-medium">
+                {postData?.title || 'AI Generated Landscape - What do you think?'}
+              </h2>
+
+              {/* Post body (not title) if exists */}
+              {postData?.selftext && (
+                <div className="px-4 sm:px-8 py-2 text-sm sm:text-base text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+                  {postData.selftext}
+                </div>
+              )}
             </div>
 
-            {/* Post Title */}
-            <h2 className="px-4 sm:px-8 py-2 text-sm sm:text-lg font-medium">
-              {postData?.title || 'AI Generated Landscape - What do you think?'}
-            </h2>
-          </div>
+            {/* Post Actions */}
+            <div className="flex items-center px-2 py-2 border-t border-gray-200 dark:border-gray-800 text-gray-500 dark:text-gray-400">
+              {/* Votes */}
+              <div className="flex items-center space-x-1 mr-2 sm:mr-4">
+                <button 
+                  onClick={handleUpvote}
+                  className={`p-1 hover:bg-gray-200 dark:hover:bg-gray-800 rounded ${isUpvoted ? 'text-orange-500' : ''}`}
+                  title="Upvote"
+                >
+                  <ArrowBigUp size={16} className="sm:w-5 sm:h-5" />
+                </button>
+                <span className={`font-medium text-sm sm:text-base ${isUpvoted ? 'text-orange-500' : isDownvoted ? 'text-blue-500' : ''}`}>
+                  {postData?.score || votes}
+                </span>
+                <button 
+                  onClick={handleDownvote}
+                  className={`p-1 hover:bg-gray-200 dark:hover:bg-gray-800 rounded ${isDownvoted ? 'text-blue-500' : ''}`}
+                  title="Downvote"
+                >
+                  <ArrowBigDown size={16} className="sm:w-5 sm:h-5" />
+                </button>
+              </div>
 
-          {/* Post Actions */}
-          <div className="flex items-center px-2 py-2 border-t border-gray-200 dark:border-gray-800 text-gray-500 dark:text-gray-400">
-            {/* Votes */}
-            <div className="flex items-center space-x-1 mr-2 sm:mr-4">
-              <button 
-                onClick={handleUpvote}
-                className={`p-1 hover:bg-gray-200 dark:hover:bg-gray-800 rounded ${isUpvoted ? 'text-orange-500' : ''}`}
-                title="Upvote"
-              >
-                <ArrowBigUp size={16} className="sm:w-5 sm:h-5" />
+              {/* Comments */}
+              <button className="flex items-center space-x-1 p-1 sm:p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded mr-2 sm:mr-4">
+                <MessageSquare size={16} className="sm:w-5 sm:h-5" />
+                <span className="text-sm sm:text-base">{postData?.num_comments || '24'} Comments</span>
               </button>
-              <span className={`font-medium text-sm sm:text-base ${isUpvoted ? 'text-orange-500' : isDownvoted ? 'text-blue-500' : ''}`}>
-                {postData?.score || votes}
-              </span>
+
+              {/* Share */}
+              <button className="flex items-center space-x-1 p-1 sm:p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded mr-2 sm:mr-4">
+                <Share2 size={16} className="sm:w-5 sm:h-5" />
+                <span className="text-sm sm:text-base">Share</span>
+              </button>
+
+              {/* Save */}
+              <button className="flex items-center space-x-1 p-1 sm:p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded mr-2 sm:mr-4">
+                <BookmarkPlus size={16} className="sm:w-5 sm:h-5" />
+                <span className="text-sm sm:text-base">Save</span>
+              </button>
+
+              {/* More */}
               <button 
-                onClick={handleDownvote}
-                className={`p-1 hover:bg-gray-200 dark:hover:bg-gray-800 rounded ${isDownvoted ? 'text-blue-500' : ''}`}
-                title="Downvote"
+                className="p-1 sm:p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded"
+                title="More options"
               >
-                <ArrowBigDown size={16} className="sm:w-5 sm:h-5" />
+                <MoreHorizontal size={16} className="sm:w-5 sm:h-5" />
               </button>
             </div>
-
-            {/* Comments */}
-            <button className="flex items-center space-x-1 p-1 sm:p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded mr-2 sm:mr-4">
-              <MessageSquare size={16} className="sm:w-5 sm:h-5" />
-              <span className="text-sm sm:text-base">{postData?.num_comments || '24'} Comments</span>
-            </button>
-
-            {/* Share */}
-            <button className="flex items-center space-x-1 p-1 sm:p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded mr-2 sm:mr-4">
-              <Share2 size={16} className="sm:w-5 sm:h-5" />
-              <span className="text-sm sm:text-base">Share</span>
-            </button>
-
-            {/* Save */}
-            <button className="flex items-center space-x-1 p-1 sm:p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded mr-2 sm:mr-4">
-              <BookmarkPlus size={16} className="sm:w-5 sm:h-5" />
-              <span className="text-sm sm:text-base">Save</span>
-            </button>
-
-            {/* More */}
-            <button 
-              className="p-1 sm:p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded"
-              title="More options"
-            >
-              <MoreHorizontal size={16} className="sm:w-5 sm:h-5" />
-            </button>
           </div>
-        </div>
+        )}
 
         {/* Error Message */}
         {error && (
