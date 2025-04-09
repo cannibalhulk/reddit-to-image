@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { ArrowBigUp, ArrowBigDown, MessageSquare, Share2, BookmarkPlus, MoreHorizontal, Eye, EyeOff, Sun, Moon, Download } from 'lucide-react';
+import { Analytics } from "@vercel/analytics/react"
 import useSWR from 'swr';
 import { useTheme } from './ThemeContext';
 import html2canvas from 'html2canvas';
@@ -255,6 +256,7 @@ function App() {
           </div>
         )}
       </div>
+      <Analytics />
     </div>
   );
 }
